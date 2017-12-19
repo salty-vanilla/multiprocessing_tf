@@ -14,17 +14,25 @@ class DataGenerator(Iterator):
             self.x = test_x
             self.y = test_y
         self.is_training = is_training
+        
+        # x: (N, 28, 28) → (N, 784)
         self.x = self.x.reshape(self.x.shape[0], self.x.shape[1]*self.x.shape[2])
+        # one-hot vectorize y
         self.y = to_categorical(self.y, 10)
         super().__init__(len(self.x), batch_size, shuffle, None)
 
     def __call__(self, *args, **kwargs):
+        """
+        if is_training: return (image_batch, label_batch)
+        else:           return (generator yield  (image_batch, label_batch))
+        """
         if self.is_training:
             return self._flow_on_training()
         else:
             return self._flow_on_test()
 
     def _flow_on_training(self):
+        # get minibatch indices
         with self.lock:
             index_array, current_index, current_batch_size = next(self.index_generator)
         image_batch = self.x[index_array]
@@ -32,11 +40,15 @@ class DataGenerator(Iterator):
         return image_batch, label_batch
 
     def _flow_on_test(self):
+        # create indices
         indexes = np.arange(self.n)
 
+        # calucuate steps per a test
         steps = self.n // self.batch_size
         if self.n % self.batch_size != 0:
             steps += 1
+        
+        # yield loop
         for i in range(steps):
             index_array = indexes[i*self.batch_size: (i+1)*self.batch_size]
             image_batch = self.x[index_array]
