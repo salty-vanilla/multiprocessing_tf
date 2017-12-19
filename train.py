@@ -23,7 +23,7 @@ def main():
 
     # process run
     for t in threads:
-        # sleep for process from conflicting
+        # sleep for preventing process from conflicting
         time.sleep(1)
         t.start()
 
