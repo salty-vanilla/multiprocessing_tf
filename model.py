@@ -10,6 +10,7 @@ class MLP:
                  input_shape=(784, ),
                  nb_classes=10,
                  optimizer=tf.train.GradientDescentOptimizer(learning_rate=1e-4)):
+        # create graph
         self.input_ = tf.placeholder(tf.float32, [None] + list(input_shape))
         self.output = self.build(self.input_, nb_classes)
         self.t = tf.placeholder(tf.float32, self.output.get_shape())
@@ -30,10 +31,12 @@ class MLP:
         batch_size = data_generator.batch_size
         nb_sample = data_generator.n
 
+        # calucuate steps per a epoch
         steps_per_epoch = nb_sample // batch_size
         if nb_sample % batch_size != 0:
             steps_per_epoch += 1
 
+        # fit loop
         for epoch in range(1, nb_epoch+1):
             for step in range(steps_per_epoch):
                 image_batch, label_batch = data_generator()
