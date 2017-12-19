@@ -24,7 +24,7 @@ class DataGenerator(Iterator):
     def __call__(self, *args, **kwargs):
         """
         if is_training: return (image_batch, label_batch)
-        else:           return (generator yield  (image_batch, label_batch))
+        else          : return (generator yield  (image_batch, label_batch))
         """
         if self.is_training:
             return self._flow_on_training()
